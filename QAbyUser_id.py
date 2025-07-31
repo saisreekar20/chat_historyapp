@@ -11,14 +11,7 @@ COSMOS_KEY = os.getenv("cosmos_key")
 client = CosmosClient(COSMOS_ENDPOINT, COSMOS_KEY)
 database_name = "chatbot_sessions"
 container_name = "chat_history"
-# session_prefix = "4dd180b8a92a4b1785715d0de26c5a01-340b"
 output_csv = "session_chat_export.csv"
-
-
-    
-
-
-
 # --- CONNECT ---
 database = client.get_database_client(database_name)
 container = database.get_container_client(container_name)
@@ -42,14 +35,10 @@ def simp(user_id : str,app_name:str):
             enable_cross_partition_query=True
         ))
         print(f"Found {len(results)} documents.")
-    
-        # for doc in results:
-        #     print(doc.get("type"), "→", doc.get("content"), doc.get("sql_result"))
+
         import json
     
         print(json.dumps(results, indent=2))
-    
-    
     
         if results:
             # --- SORT ALL DOCUMENTS CHRONOLOGICALLY ---
