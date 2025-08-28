@@ -37,10 +37,10 @@ def simp(user_id : str,app_name:str, date : Optional[str]):
         session_prefix = cleaned_user_id + "-" + app_name + "-" + cleaned_date 
     else:
         session_prefix = cleaned_user_id + "-" + app_name
-    
-    params = [{"name": "@prefix", "value": f"{session_prefix}-%"}]
-    
     print(session_prefix)
+    params = [{"name": "@prefix", "value": f"{session_prefix}%"}]
+    print(params)
+
     try:
         print("Querying Cosmos DB for all matching documents...")
         results = list(container.query_items(
@@ -48,7 +48,9 @@ def simp(user_id : str,app_name:str, date : Optional[str]):
             parameters=params,
             enable_cross_partition_query=True
         ))
+        
         print(f"Found {len(results)} documents.")
+
     
         # for doc in results:
         #     print(doc.get("type"), "→", doc.get("content"), doc.get("sql_result"))
