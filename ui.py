@@ -5,10 +5,11 @@ st.title("Sample APP")
 
 user_id = st.text_input("Enter your user id")
 app_name = st.text_input("Enter the app name")
+date = st.text_input("Enter the date in YYYY/MM/DD format")
 
 if st.button("Show Chat"):
     if user_id and app_name:
-        response = simp(user_id,app_name)
+        response = simp(user_id,app_name,date)
         if response is not None:
             with open("session_chat_export.csv", "rb") as f:
                 st.download_button(
@@ -34,4 +35,3 @@ if st.button("Show Chat"):
             st.error(f"{user_id} have no chat-history in the app {app_name}")
     else:
         st.error("You should provide both user id and app name.")
-
