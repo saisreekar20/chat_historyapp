@@ -4,6 +4,7 @@ from datetime import datetime
 import os
 from dotenv import load_dotenv
 import re 
+from typing import Optional
 load_dotenv()
 # --- CONFIG ---
 COSMOS_ENDPOINT = os.getenv("cosmos_end_point")
@@ -11,7 +12,14 @@ COSMOS_KEY = os.getenv("cosmos_key")
 client = CosmosClient(COSMOS_ENDPOINT, COSMOS_KEY)
 database_name = "chatbot_sessions"
 container_name = "chat_history"
+# session_prefix = "4dd180b8a92a4b1785715d0de26c5a01-340b"
 output_csv = "session_chat_export.csv"
+
+
+    
+
+
+
 # --- CONNECT ---
 database = client.get_database_client(database_name)
 container = database.get_container_client(container_name)
@@ -21,9 +29,15 @@ query = """
 SELECT * FROM c
 WHERE c.session_id LIKE @prefix
 """
-def simp(user_id : str,app_name:str):
+def simp(user_id : str,app_name:str, date : Optional[str]):
     cleaned_user_id = re.sub(r"-", "", user_id)
-    session_prefix = cleaned_user_id + "-" + app_name  
+    if date is not None:
+        cleaned_date = re.sub(r"-", "", date) 
+        cleaned_date = re.sub(r"/", "", cleaned_date)
+        session_prefix = cleaned_user_id + "-" + app_name + "-" + cleaned_date 
+    else:
+        session_prefix = cleaned_user_id + "-" + app_name
+    
     params = [{"name": "@prefix", "value": f"{session_prefix}-%"}]
     
     print(session_prefix)
@@ -35,10 +49,14 @@ def simp(user_id : str,app_name:str):
             enable_cross_partition_query=True
         ))
         print(f"Found {len(results)} documents.")
-
+    
+        # for doc in results:
+        #     print(doc.get("type"), "→", doc.get("content"), doc.get("sql_result"))
         import json
     
         print(json.dumps(results, indent=2))
+    
+    
     
         if results:
             # --- SORT ALL DOCUMENTS CHRONOLOGICALLY ---
